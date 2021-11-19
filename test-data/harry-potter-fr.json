@@ -1,0 +1,63 @@
+{
+  "url": "https://www.audible.fr/pd/Harry-Potter-a-lEcole-des-Sorciers-Harry-Potter-1-Livre-Audio/B06Y66DT8R",
+  "authors": [
+    {
+      "name": "J.K. Rowling",
+      "url": "https://www.audible.fr/author/J-K-Rowling/B000AP9A6K"
+    }
+  ],
+  "narrators": [
+    {
+      "name": "Bernard Giraudeau",
+      "url": "https://www.audible.fr/search?searchNarrator=Bernard+Giraudeau"
+    }
+  ],
+  "series": [
+    {
+      "name": "Le Monde des sorciers",
+      "url": "https://www.audible.fr/series/Le-Monde-des-sorciers-Livres-Audio/B08XMX5P9B"
+    },
+    {
+      "name": "Harry Potter",
+      "url": "https://www.audible.fr/series/Harry-Potter-Livres-Audio/B06Y67Q9FY"
+    }
+  ],
+  "copyright": "©1997 J.K. Rowling (P)2000 Éditions Gallimard Jeunesse",
+  "copyrightYear": "1997",
+  "title": "Harry Potter à l'École des Sorciers",
+  "cleanTitle": "Harry Potter à l'École des Sorciers",
+  "publisher": "Pottermore Publishing",
+  "language": {
+    "name": "French",
+    "iso639_1": "fr",
+    "iso639_2_T": "fra",
+    "iso639_2_B": "fre",
+    "iso639_3": "fra"
+  },
+  "description": "Orphelin, Harry Potter est élevé par un oncle et une tante qui ne l'aiment pas. Le jour de ses 11 ans, son existence bascule : un géant l'emmène à Poudlard, l'école de sorcellerie ! Voilà son incroyable destin : être sorcier. Jeter des sorts, utiliser des pouvoirs, ensorceler les trolls... À la maison Gryffondor, il rencontre Ron et Hermione, s'initie au Quidditch, un sport pratiqué sur un balai. La vie est excitante, mais Voldemort, Celui-Dont-On-Ne-Doit-Pas-Prononcer-Le-Nom, refait surface.\n\nInitiation ou plaisir renouvelé, plongez dans le 1er tome du célèbre chef d'œuvre de J.K. Rowling ! Guidé par une voix envoutante, revivez le début de la série Harry Potter avec ce livre audio à télécharger.",
+  "datePublished": "2017-05-11T00:00:00.000Z",
+  "rating": {
+    "value": 4.457103637611531,
+    "count": 2914
+  },
+  "price": {
+    "low": 9.95,
+    "high": 24.99,
+    "currency": "EUR"
+  },
+  "coverUrl": "https://m.media-amazon.com/images/I/61y9Jijcz9L._SL500_.jpg",
+  "genres": [
+    {
+      "name": "Jeunesse",
+      "url": "https://www.audible.fr/cat/Jeunesse-Livres-Audio/21228877031"
+    },
+    {
+      "name": "Roman et littérature",
+      "url": "https://www.audible.fr/cat/Jeunesse/Roman-et-litterature-Livres-Audio/21228924031"
+    }
+  ],
+  "isAbridged": false,
+  "asin": "B06Y66DT8R",
+  "sku": "BK_FPOT_000001FR",
+  "duration": 30060
+}

@@ -1,0 +1,71 @@
+{
+  "name": "audible-api",
+  "version": "1.0.0-beta.0",
+  "description": "A Node.js API for searching the audible website",
+  "license": "MIT",
+  "author": "Chris Sandvik <chris.sandvik@gmail.com>",
+  "homepage": "https://github.com/book-tools/audible-api#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/book-tools/audible-api.git"
+  },
+  "bugs": {
+    "url": "https://github.com/book-tools/audible-api/issues"
+  },
+  "type": "module",
+  "main": "./dist/audible-api.cjs.js",
+  "module": "./dist/audible-api.module.js",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "prebuild": "rimraf dist",
+    "build": "microbundle -f esm,cjs",
+    "dev": "microbundle watch -f esm,cjs",
+    "format": "prettier --write .",
+    "format:package": "prettier-package-json --write",
+    "prepare": "husky install",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.10",
+    "dirty-json": "^0.9.2",
+    "node-fetch": "^2.6.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "@trivago/prettier-plugin-sort-imports": "^3.1.1",
+    "babel-jest": "^27.0.6",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-jest": "^24.4.0",
+    "eslint-plugin-jsdoc": "^36.0.8",
+    "husky": "^7.0.1",
+    "jest": "^27.0.6",
+    "lint-staged": "^11.1.2",
+    "microbundle": "^0.13.3",
+    "prettier": "^2.3.2",
+    "prettier-package-json": "^2.6.0",
+    "rimraf": "^3.0.2"
+  },
+  "keywords": [
+    "audible",
+    "audiobook",
+    "book",
+    "metadata",
+    "search"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "lint-staged": {
+    "src/**/*.js": "eslint --cache --fix",
+    "*": "prettier --ignore-unknown --write",
+    "package.json": "prettier-package-json --write"
+  },
+  "source": "src/index.js"
+}
