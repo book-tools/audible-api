@@ -25,6 +25,7 @@
     "dev": "microbundle watch -f esm,cjs",
     "format": "prettier --write .",
     "format:package": "prettier-package-json --write",
+    "lint": "eslint .",
     "prepare": "husky install",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },

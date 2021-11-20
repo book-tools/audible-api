@@ -15,15 +15,85 @@ import {
 import { SECONDS_IN_HOUR, SECONDS_IN_MINUTE } from "./utils/time";
 
 /**
+ * An object representing the genres a book is a part of
+ *
+ * @typedef {object} Genre
+ * @property {string} name Audible's name for the genre
+ * @property {string} url The Audible link for the genre's page
+ */
+
+/**
+ * An object representing the price range of the book
+ *
+ * @typedef {object} Price
+ * @property {number} low The lowest price a book has been sold at
+ * @property {number} high The highest price a book has been sold at
+ * @property {string} currency The code for the currency that the `low` and `high` represent
+ */
+
+/**
+ * An object representing the aggregate rating of the book
+ *
+ * @typedef {object} Rating
+ * @property {number} value The average user rating of the book
+ * @property {number} count The total number of ratings the book has received
+ */
+
+/**
+ * An object representing the language the book is read in, with its name and ISO 639 language codes
+ *
+ * @typedef {object} Language
+ * @property {string} name The name of the language written with Latin characters
+ * @property {string} iso639_1 The ISO 639-1 code for the language - https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+ * @property {string} iso639_2_T The ISO 639-2-T code for the language - https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
+ * @property {string} iso639_2_B The ISO 639-2-B code for the language - https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
+ * @property {string} iso639_3 The ISO 639-3 code for the language - https://en.wikipedia.org/wiki/List_of_ISO_639-3_codes
+ */
+
+/**
+ * An object representing a book's place in a series
+ *
+ * @typedef {object} Series
+ * @property {string} name The name of the series
+ * @property {string} url The Audible link to the full series listing
+ * @property {number} part The book's place in the order of the series
+ */
+
+/**
  * A creator of the audiobook, either Author or Narrator
  *
  * @typedef {object} Creator
  * @property {string} id Amazon's unique identifier for the creator (only applies to author)
  * @property {string} name The creator's name
- * @property {string} bio a description of the creator
+ * @property {string} bio A description of the creator
  * @property {string} url The Audible URL of the creator's page with photo and bio
  * @property {string} imageUrl A full resolution photo of the creator
  * @property {string} thumbnailImageUrl A small resolution thumbnail of the creator's photo (usually 120x120)
+ */
+
+/**
+ * An object representing the complete details of an audible audiobook
+ *
+ * @typedef {object} Book
+ * @property {string} asin "Amazon Standard Identification Number" for the book
+ * @property {string} sku Amazon's "Stock Keeping Unit" for the book
+ * @property {string} url The Audible link where you can view the book
+ * @property {string} title Audible's full title for the book
+ * @property {Date} datePublished The date the book was published
+ * @property {string} cleanTitle A simplified version of the title with extra information removed
+ * @property {string} description Audible's description for the book with the HTML tags removed
+ * @property {Creator[]} authors A list of author's given credit for writing the book
+ * @property {Creator[]} narrators A list of narrators's given credit for reading the book
+ * @property {string} publisher The publishing company for the audiobook
+ * @property {string} copyright The copyright statement for the book
+ * @property {string} copyrightYear The year the original book was copyrighted
+ * @property {Series[]} series The series' that the book is a part of on Audible
+ * @property {boolean} isAbridged Whether or not the book is an abridged version
+ * @property {string} coverUrl A link to a full sized image of the book's cover
+ * @property {Genre[]} genres An array of genres the book is a part of
+ * @property {Price} price The price range the book has been sold for
+ * @property {Rating} rating The aggregate user rating of the book
+ * @property {Language} language An object representing the language the book is read in
  */
 
 /**
@@ -86,16 +156,17 @@ async function parseAuthorInfo(/** @type {Creator} */ author) {
 /**
  * Get all Audible details about an Audiobook from its ASIN
  *
- * @param {string} asin   Amazon Standard Identification Number, Amazon's unique ID that they assign to all of their products
- * @param {string} [site=us] The audible site locality to get the book data from — Default: `us` | Options: `us`, `ca`, `gb`, `au`, `fr`, `de`, `it`
- * @param {boolean} [getAuthors=false] Whether or not to get the full author information for each author.  This will add the author's bio and photo urls but it will take more time as their page must be pulled and parsed
- * @returns {object} The parsed book data
+ * @param {string} asin Amazon Standard Identification Number, Amazon's unique ID that they assign to all of their products
+ * @param {object} opts The optional arguments
+ * @param {string} [opts.site=us] The audible site locality to get the book data from — Default: `us` | Options: `us`, `ca`, `gb`, `au`, `fr`, `de`, `it`
+ * @param {boolean} [opts.getAuthors=false] Whether or not to get the full author information for each author.  This will add the author's bio and photo urls but it will take more time as their page must be pulled and parsed
+ * @returns {Book} The parsed book data
  */
-export default async function getAudibleBook(
-  asin,
-  { site = "us", getAuthors = false } = {}
-) {
+export default async function getAudibleBook(asin, opts = {}) {
   try {
+    const site = opts.site || "us";
+    const getAuthors = opts.getAuthors || false;
+
     const {
       url: baseUrl,
       // language: siteLanguage,
