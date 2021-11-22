@@ -1,5 +1,7 @@
+import { SearchLanguages } from "../types";
+
 // feature_six_browse-bin
-export const searchLanguages = {
+export const searchLanguages: { [key in SearchLanguages]: string } = {
   en: "18685580011",
   es: "18685609011",
   de: "18685583011",

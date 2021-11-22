@@ -1,4 +1,4 @@
-import getAudibleBook from "./get-audible-book";
+import { getAudibleBook } from "../src";
 
 describe("getAudibleBook tests", () => {
   test("returns a book with the correct data", async () => {

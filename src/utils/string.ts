@@ -1,8 +1,6 @@
-export const cleanDescription = (description) => {
-  if (!description) {
-    return null;
-  }
+import { Creator } from "../types";
 
+export const cleanDescription = (description: string): string => {
   let synopsis = description;
   // Remove any inline tags
   synopsis = synopsis.replace(/<\/?(i|em|u|b|strong)>/gi, "");
@@ -25,17 +23,22 @@ export const cleanDescription = (description) => {
   return synopsis;
 };
 
-export const stripDiacretics = (str) =>
+export const stripDiacretics = (str: string): string =>
   str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-export const removeNonWordChars = (str) => str.replace(/\W+/g, " ");
+export const removeNonWordChars = (str: string): string =>
+  str.replace(/\W+/g, " ");
 
-export const removeSpaces = (str) => str.replace(/\s/g, "");
+export const removeSpaces = (str: string): string => str.replace(/\s/g, "");
 
-export const simplify = (str) =>
+export const simplify = (str: string): string =>
   removeSpaces(removeNonWordChars(stripDiacretics(str).toLowerCase()));
 
-export const fuzzyMatch = (str1, str2, checkIncludes = false) => {
+export const fuzzyMatch = (
+  str1: string,
+  str2: string,
+  checkIncludes = false
+): boolean => {
   const simpleStr1 = simplify(str1);
   const simpleStr2 = simplify(str2);
 
@@ -46,11 +49,7 @@ export const fuzzyMatch = (str1, str2, checkIncludes = false) => {
   );
 };
 
-export const cleanTitle = (title) => {
-  if (!title) {
-    return title;
-  }
-
+export const cleanTitle = (title: string): string => {
   let newTitle = title.trim();
 
   // If the title ends with a series part, remove it
@@ -59,7 +58,7 @@ export const cleanTitle = (title) => {
 
   // If the title ends with "unabridged", with or without parenthesis
   // remove them; case insensitive
-  newTitle = newTitle.replace(/\(?unabridged\)?$/i).trim();
+  newTitle = newTitle.replace(/\(?unabridged\)?$/i, "").trim();
 
   // If there are 2 or more spaces in a row, replace them with a single space
   newTitle = newTitle.replace(/\s{2,}/g, " ");
@@ -67,7 +66,7 @@ export const cleanTitle = (title) => {
   return newTitle;
 };
 
-export const getCopyrightYear = (copyright) => {
+export const getCopyrightYear = (copyright: string): string => {
   if (!copyright) {
     return "";
   }
@@ -81,7 +80,10 @@ export const getCopyrightYear = (copyright) => {
   return "";
 };
 
-export const checkAuthorOverlap = (authors1, authors2) => {
+export const checkAuthorOverlap = (
+  authors1: Creator[],
+  authors2: Creator[]
+) => {
   for (let i = 0; i < authors1.length; i += 1) {
     for (let j = 0; j < authors2.length; j += 1) {
       if (fuzzyMatch(authors1[i].name, authors2[j].name)) {
@@ -93,6 +95,8 @@ export const checkAuthorOverlap = (authors1, authors2) => {
   return false;
 };
 
-export const cleanUrl = (url) => url.replace(/\?.*$/, "").trim();
+export const cleanUrl = (url: string): string =>
+  url.replace(/\?.*$/, "").trim();
 
-export const cleanNarratorUrl = (url) => url.replace(/[?&]ref=.*$/, "").trim();
+export const cleanNarratorUrl = (url: string): string =>
+  url.replace(/[?&]ref=.*$/, "").trim();

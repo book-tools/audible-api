@@ -1,6 +1,7 @@
 import languages from "../data/iso-language-codes";
+import { BookLanguage } from "../types";
 
-export const getLanguageByName = (name) => {
+export const getLanguageByName = (name: string): BookLanguage | null => {
   if (!name) {
     return null;
   }
@@ -12,37 +13,23 @@ export const getLanguageByName = (name) => {
   );
 
   if (match) {
-    return {
+    const langauge: BookLanguage = {
       name: match.name,
       iso639_1: match.iso639_1,
-      iso639_2: match.iso639_2_T,
+      iso639_2_T: match.iso639_2_T,
+      iso639_2_B: match.iso639_2_B,
+      iso639_3: match.iso639_3,
     };
+
+    return langauge;
   }
 
   return null;
 };
 
-export const getLanguageByIso1 = (code) => {
-  if (!code) {
-    return null;
-  }
-
-  const match = languages.find(
-    (language) => language.iso639_1 === code.toLowerCase()
-  );
-
-  if (match) {
-    return {
-      name: match.name,
-      iso639_1: match.iso639_1,
-      iso639_2: match.iso639_2_T,
-    };
-  }
-
-  return null;
-};
-
-export const parseLanguage = (lang) => {
+export const parseLanguage = (
+  lang: string | undefined
+): BookLanguage | null => {
   if (!lang || typeof lang !== "string") {
     return null;
   }
@@ -73,11 +60,15 @@ export const parseLanguage = (lang) => {
   }
 
   if (match) {
-    return {
+    const langauge: BookLanguage = {
       name: match.name,
       iso639_1: match.iso639_1,
-      iso639_2: match.iso639_2_T,
+      iso639_2_T: match.iso639_2_T,
+      iso639_2_B: match.iso639_2_B,
+      iso639_3: match.iso639_3,
     };
+
+    return langauge;
   }
 
   return null;

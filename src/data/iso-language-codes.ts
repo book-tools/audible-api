@@ -1633,7 +1633,7 @@ const isoLanguageCodes = [
   },
   {
     family: "Indo-European",
-    name: "Spanish, Castilian",
+    name: "Spanish",
     nativeName: "Español",
     iso639_1: "es",
     iso639_2_T: "spa",

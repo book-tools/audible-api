@@ -1,4 +1,4 @@
-import searchAudible from "./search-audible";
+import { searchAudible } from "../src";
 
 describe("searchAudible tests", () => {
   test("returns a list of search results", async () => {

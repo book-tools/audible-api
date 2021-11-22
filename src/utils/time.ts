@@ -1,10 +1,10 @@
-/** @type {number} The number of milliseconds in 1 second */
+/** The number of milliseconds in 1 second */
 export const MILLISECONDS_IN_SECOND = 1000;
-/** @type {number} The number of seconds in 1 minute */
+/** The number of seconds in 1 minute */
 export const SECONDS_IN_MINUTE = 60;
-/** @type {number} The number of minutes in 1 hour */
+/** The number of minutes in 1 hour */
 export const MINUTES_IN_HOUR = 60;
-/** @type {number} The number of seconds in 1 hour */
+/** The number of seconds in 1 hour */
 export const SECONDS_IN_HOUR = SECONDS_IN_MINUTE * MINUTES_IN_HOUR;
 
 /**
@@ -13,7 +13,7 @@ export const SECONDS_IN_HOUR = SECONDS_IN_MINUTE * MINUTES_IN_HOUR;
  * @param {string} runtimeStr A string in the format of `N hrs and N mins` to parse
  * @returns {number} The total number of seconds in the book
  */
-export function getDurationFromStr(runtimeStr) {
+export function getDurationFromStr(runtimeStr: string): number {
   let duration = 0;
 
   const hoursMatch = runtimeStr.match(/(\d+) hrs/);
