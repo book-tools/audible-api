@@ -21,7 +21,6 @@ import {
   Category,
   Creator,
   Duration,
-  ReleaseTime,
   SearchLanguage,
   Series,
 } from "./types";
@@ -31,44 +30,91 @@ import { getDurationFromStr } from "./utils/time";
 
 /**
  * A set of parameters used to search the Audible website
- *
- * @property {string} keywords A general search string
- * @property {string} title A title of a book to search for
- * @property {string} author The name of an author to search for
- * @property {string} narrator The name of a narrator to search for
- * @property {string} publisher A publishing company to search for
- * @property {Category} category One of a predefined list of strings representing top level categories on Audible
- * @property {boolean} [isAudibleOriginal=false] Whether or not to limit the search to Audible Originals
- * @property {boolean} [isPlusCatalog=false] whether or not to limit the search to Audible's Plus Catalog
- * @property {ReleaseTime} releaseTime A timeframe from a predefined list of when the book was released
- * @property {Duration[]} durations An array of strings representing the length of time the book can fall into
- * @property {string[]} languages An array of ISO 639-1 langauges codes to limit the books to from a pre-defined list
- * @property {boolean} [isWhisperSync=false] Whether or not to limit the results to Whisper Sync compatible books
- * @property {boolean} isAbridged Pass this as either true or false to limit the results to abridged or unabridged books respectively
- * @property {number} pageNum The page number of the search results to view
- * @property {number} pageSize The number of results to return — `20`, `30`, `40`, or `50` — Default: `20`
- * @property {boolean} [getFull=false] Whether or not to parse all of the information about each book from the search result, this will take much longer
- * @property {string} [site="us"] A ISO 3166-1 alpha-2 country code representing the Audible site to search — `us`, `ca`, `gb`, `au`, `fr`, `de`, `it` — Default: `us`
  */
-export type SearchParams = {
+export interface SearchParams {
+  /**
+   * A general search string
+   */
   keywords?: string;
+  /**
+   * A title of a book to search for
+   */
   title?: string;
+  /**
+   * The name of an author to search for
+   */
   author?: string;
+  /**
+   * The name of a narrator to search for
+   */
   narrator?: string;
+  /**
+   * A publishing company to search for
+   */
   publisher?: string;
+  /**
+   * One of a predefined list of strings representing top level categories on Audible
+   */
   category?: Category;
+  /**
+   * Whether or not to limit the search to Audible Originals
+   *
+   * @defaultValue `false`
+   */
   isAudibleOriginal?: boolean;
+  /**
+   * Whether or not to limit the search to Audible's Plus Catalog
+   *
+   * @defaultValue `false`
+   */
   isPlusCatalog?: boolean;
-  releaseTime?: ReleaseTime;
+  /**
+   * A timeframe from a predefined list of when the book was released
+   */
+  releaseTime?: "soon" | "last30" | "last90";
+  /**
+   * An array of strings representing the length of time the book can fall into
+   *
+   * Options: `<1` | `1-3` | `3-6` | `6-10` | `10-20` | `>20`;
+   */
   durations?: Duration[];
+  /**
+   * An array of ISO 639-1 langauges codes to limit the books to from a pre-defined list
+   *
+   * Options: `en` | `es` | `de` | `fr` | `it` | `pt` | `ja` | `ru` | `af` | `da` | `zh` | `nl`
+   */
   languages?: SearchLanguage[];
+  /**
+   * Whether or not to limit the results to Whisper Sync compatible books
+   */
   isWhisperSync?: boolean;
+  /**
+   * Pass this as either true or false to limit the results to abridged or unabridged books respectively
+   */
   isAbridged?: boolean;
+  /**
+   * The page number of the search results to view
+   */
   pageNum?: number;
-  pageSize?: number;
+  /**
+   * The number of results to return
+   *
+   * @defaultValue `20`
+   */
+  pageSize?: 20 | 30 | 40 | 50;
+  /**
+   * Whether or not to parse all of the information about each book from the search result, this will take much longer
+   *
+   * @defaultValue `false`
+   */
   getFull?: boolean;
-  site?: string;
-};
+  /**
+   * A ISO 3166-1 alpha-2 country code representing the Audible site to search
+   *
+   * @defaultValue `us`
+   */
+  site?: "us" | "ca" | "gb" | "au" | "fr" | "de" | "it";
+}
 
 type SearchResults = {
   totalResults: number;
@@ -78,8 +124,8 @@ type SearchResults = {
 /**
  * Search the Audible website for a list of books matching your search criteria
  *
- * @param {SearchParams} options An object containing your search criteria
- * @returns {Promise<SearchResults>} A promise returning an array of book objects from the search results, along with total results
+ * @param options - An object containing your search criteria
+ * @returns A promise returning an array of book objects from the search results, along with total results
  */
 export default async function searchAudible({
   keywords,

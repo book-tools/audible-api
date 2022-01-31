@@ -11,7 +11,6 @@
     "plugin:@typescript-eslint/recommended",
     "airbnb-base",
     "airbnb-typescript/base",
-    "plugin:jsdoc/recommended",
     "prettier"
   ],
   "plugins": ["jest", "@typescript-eslint", "eslint-plugin-tsdoc"],
@@ -23,6 +22,7 @@
   "rules": {
     "prefer-destructuring": "off",
     "no-console": "off",
-    "@typescript-eslint/ban-ts-comment": "off"
+    "@typescript-eslint/ban-ts-comment": "off",
+    "tsdoc/syntax": "warn"
   }
 }

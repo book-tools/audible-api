@@ -1,11 +1,21 @@
-/* eslint-disable no-param-reassign */
 import { load as loadPage } from "cheerio";
 // @ts-ignore
 import dJSON from "dirty-json";
 import fetch from "node-fetch";
+import {
+  AggregateOffer,
+  AggregateRating,
+  Audiobook,
+  BreadcrumbList,
+  ListItem,
+  MusicGroup,
+  Person,
+  Product,
+  Thing,
+} from "schema-dts";
 import { URL } from "url";
 import { siteCountries } from "./data/audible-search-fields";
-import { Book, Creator, Series } from "./types";
+import { Book, Creator, Genre, Series } from "./types";
 import { getLanguageByName } from "./utils/language";
 import {
   cleanDescription,
@@ -19,8 +29,8 @@ import { SECONDS_IN_HOUR, SECONDS_IN_MINUTE } from "./utils/time";
 /**
  * Get extended information about the author from their Audible URL
  *
- * @param {Creator} author An initial object of the creator to extend (reuired url)
- * @returns {Creator} An extended object of information about the author
+ * @param author - An initial object of the creator to extend (reuired url)
+ * @returns An extended object of information about the author
  */
 async function parseAuthorInfo(author: Creator): Promise<Creator> {
   try {
@@ -33,7 +43,7 @@ async function parseAuthorInfo(author: Creator): Promise<Creator> {
 
     const page = loadPage(body);
 
-    let ldJsonList: any[] = [];
+    let ldJsonList: Thing[] = [];
     page('script[type="application/ld+json"]').each((i, elSel) => {
       // Use dirty-json because the description section has line breaks instead of \n characters like it should
       const jsonObj = dJSON.parse(page(elSel).text());
@@ -41,24 +51,7 @@ async function parseAuthorInfo(author: Creator): Promise<Creator> {
     });
     ldJsonList = ldJsonList.flat();
 
-    // parse useful ld+json from the dom of the authors's page
-    const authorJson = ldJsonList.find(
-      (jsonItem) => jsonItem["@type"] === "MusicGroup"
-    );
-    const personJson = ldJsonList.find(
-      (jsonItem) => jsonItem["@type"] === "Person"
-    );
-
     const newAuthor: Creator = { ...author };
-
-    // Get author's name
-    newAuthor.name = authorJson?.name || newAuthor.name;
-
-    // Get author's bio
-    newAuthor.bio = authorJson.description || newAuthor.bio;
-
-    // Get author's amazon ID
-    newAuthor.id = authorJson.url.split("/").pop();
 
     // Get Author's Images
     const main = ".adbl-main";
@@ -66,10 +59,32 @@ async function parseAuthorInfo(author: Creator): Promise<Creator> {
       "src"
     );
 
-    newAuthor.imageUrl = personJson.image;
+    // parse useful ld+json from the dom of the authors's page
+    const authorJson: MusicGroup = ldJsonList.find(
+      (jsonItem) => jsonItem["@type"] === "MusicGroup"
+    ) as MusicGroup;
 
-    // Get clean author url
-    newAuthor.url = authorJson.url || newAuthor.url;
+    if (authorJson && typeof authorJson !== "string") {
+      // Get author's name
+      newAuthor.name = (authorJson.name as string) || newAuthor.name;
+
+      // Get author's bio
+      newAuthor.bio = (authorJson.description as string) || newAuthor.bio;
+
+      // Get author's amazon ID
+      newAuthor.id = (authorJson.url as string).split("/").pop();
+
+      // Get clean author url
+      newAuthor.url = (authorJson.url as string) || newAuthor.url;
+    }
+
+    const personJson: Person = ldJsonList.find(
+      (jsonItem) => jsonItem["@type"] === "Person"
+    ) as Person;
+
+    if (personJson && typeof personJson !== "string") {
+      newAuthor.imageUrl = personJson.image as string;
+    }
 
     return newAuthor;
   } catch (err) {
@@ -77,19 +92,23 @@ async function parseAuthorInfo(author: Creator): Promise<Creator> {
   }
 }
 
-type Options = {
+interface Options {
+  /**
+   * The audible site locality to get the book data from — Default: `us` | Options: `us`, `ca`, `gb`, `au`, `fr`, `de`, `it`
+   */
   site?: string;
+  /**
+   * Whether or not to get the full author information for each author.  This will add the author's bio and photo urls but it will take more time as their page must be pulled and parsed
+   */
   getAuthors?: boolean;
-};
+}
 
 /**
  * Get all Audible details about an Audiobook from its ASIN
  *
- * @param {string} asin Amazon Standard Identification Number, Amazon's unique ID that they assign to all of their products
- * @param {object} opts The optional arguments
- * @param {string} [opts.site=us] The audible site locality to get the book data from — Default: `us` | Options: `us`, `ca`, `gb`, `au`, `fr`, `de`, `it`
- * @param {boolean} [opts.getAuthors=false] Whether or not to get the full author information for each author.  This will add the author's bio and photo urls but it will take more time as their page must be pulled and parsed
- * @returns {Book} The parsed book data
+ * @param asin - Amazon Standard Identification Number, Amazon's unique ID that they assign to all of their products
+ * @param opts - The optional arguments
+ * @returns The parsed book data
  */
 export default async function getAudibleBook(asin: string, opts: Options = {}) {
   try {
@@ -219,7 +238,7 @@ export default async function getAudibleBook(asin: string, opts: Options = {}) {
       console.warn("Error parsing copyright", err);
     }
 
-    let ldJsonList: any[] = [];
+    let ldJsonList: Thing[] = [];
     page('script[type="application/ld+json"]').each((i, elSel) => {
       let jsonObj;
       try {
@@ -234,83 +253,93 @@ export default async function getAudibleBook(asin: string, opts: Options = {}) {
     // parse useful ld+json from the dom of the page
 
     // "@type": "BreadcrumbList"
-    const breadcrumbJson = ldJsonList.find(
+    const breadcrumbJson: BreadcrumbList = ldJsonList.find(
       (jsonItem) => jsonItem["@type"] === "BreadcrumbList"
-    );
+    ) as BreadcrumbList;
 
+    // Get Genres
     if (breadcrumbJson) {
-      // Get Genres
-      if (breadcrumbJson) {
-        book.genres = breadcrumbJson.itemListElement
-          .slice(1)
-          .map((breadcrumb: any) => ({
-            name: breadcrumb.item.name,
-            url: `${baseUrl}${breadcrumb.item["@id"]}`,
-          }));
-      }
+      const itemListElement = breadcrumbJson.itemListElement as ListItem[];
+      const newGenres: Genre[] = [];
+      itemListElement.slice(1).forEach((breadcrumb: ListItem) => {
+        if (breadcrumb) {
+          const item = breadcrumb.item as Thing;
+
+          if (typeof item !== "string") {
+            newGenres.push({
+              name: item.name as string,
+              url: `${baseUrl}${item["@id"]}`,
+            });
+          }
+        }
+      });
+
+      book.genres = newGenres;
     }
 
     // "@type": "Product"
-    const productJson = ldJsonList.find(
+    const productJson: Product = ldJsonList.find(
       (jsonItem) => jsonItem["@type"] === "Product"
-    );
+    ) as Product;
 
     if (productJson) {
       // Get ASIN
-      book.asin = productJson.productID;
+      book.asin = productJson.productID as string;
       // Get SKU
-      book.sku = productJson.sku;
+      book.sku = productJson.sku as string;
     }
 
     // "@type": "Audiobook"
-    const bookJson = ldJsonList.find(
+    const bookJson: Audiobook = ldJsonList.find(
       (jsonItem) => jsonItem["@type"] === "Audiobook"
-    );
+    ) as Audiobook;
 
     if (bookJson) {
       // Get title
-      book.title = bookJson.name;
+      book.title = bookJson.name as string;
       // Get clean title, without series part ("Book N") or "(Unabridged)"
-      book.cleanTitle = cleanTitle(bookJson.name);
+      book.cleanTitle = cleanTitle(bookJson.name as string);
       // Get Publisher
-      book.publisher = bookJson.publisher;
+      book.publisher = bookJson.publisher as string;
       // Get language and language codes
-      const language = getLanguageByName(bookJson.inLanguage);
+      const language = getLanguageByName(bookJson.inLanguage as string);
       if (language) {
         book.language = language;
       }
       // Get full description (without any html)
-      book.description = cleanDescription(bookJson.description);
+      book.description = cleanDescription(bookJson.description as string);
       // Get the date the book was published
-      book.datePublished = new Date(bookJson.datePublished);
+      book.datePublished = new Date(bookJson.datePublished as string);
       // Get user rating
       if (bookJson.aggregateRating) {
-        const { ratingValue, ratingCount } = bookJson.aggregateRating;
+        const { ratingValue, ratingCount } =
+          bookJson.aggregateRating as AggregateRating;
         book.rating = {
-          value: parseFloat(ratingValue),
+          value: parseFloat(ratingValue as string),
           count: Number(ratingCount),
         };
       }
       // Get pricing
       if (bookJson.offers) {
-        const { lowPrice, highPrice, priceCurrency } = bookJson.offers;
+        const { lowPrice, highPrice, priceCurrency } =
+          bookJson.offers as AggregateOffer;
         book.price = {
           low: Number(lowPrice),
           high: Number(highPrice),
-          currency: priceCurrency,
+          currency: priceCurrency as string,
         };
       }
       // Get Abridgement
-      book.isAbridged = bookJson.abridged === "true";
+      book.isAbridged = (bookJson.abridged as string) === "true";
       // Get duration in seconds
-      const durationStr = bookJson.duration;
+      const durationStr = bookJson.duration as string;
       if (durationStr) {
         const hours = Number(durationStr.match(/\d+(?=H)/)?.[0] || 0);
         const minutes = Number(durationStr.match(/\d+(?=M)/)?.[0] || 0);
         book.duration = hours * SECONDS_IN_HOUR + minutes * SECONDS_IN_MINUTE;
       }
       // Get cover image URL
-      book.coverUrl = bookJson.image;
+      book.coverUrl = bookJson.image as string;
     }
 
     return book;

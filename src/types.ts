@@ -53,15 +53,11 @@ export type Category =
   | "travelAndTourism"
   | undefined;
 
-export type ReleaseTime = "soon" | "last30" | "last90";
-
 export type Duration = "<1" | "1-3" | "3-6" | "6-10" | "10-20" | ">20";
 
 /**
  * An object representing a genre that the book is classified under on Audible
  *
- * @property {string} name Audible's name for the genre
- * @property {string} url The Audible link for the genre's page
  * @example
  * ```ts
  * const genre: Genre = {
@@ -70,17 +66,20 @@ export type Duration = "<1" | "1-3" | "3-6" | "6-10" | "10-20" | ">20";
  * }
  * ```
  */
-export type Genre = {
+export interface Genre {
+  /**
+   * Audible's name for the genre
+   */
   name: string;
+  /**
+   * The Audible link for the genre's page
+   */
   url: string;
-};
+}
 
 /**
  * An object representing the price range of the book
  *
- * @property {number} low The lowest price a book has been sold at
- * @property {number} high The highest price a book has been sold at
- * @property {string} currency The code for the currency that the `low` and `high` represent
  * @example
  * ```ts
  * const price: Price = {
@@ -91,16 +90,23 @@ export type Genre = {
  * ```
  */
 export type Price = {
+  /**
+   * The lowest price a book has been sold at
+   */
   low: number;
+  /**
+   * The highest price a book has been sold at
+   */
   high: number;
-  currency: string;
+  /**
+   * The code for the currency that the `low` and `high` represent
+   */
+  currency?: string;
 };
 
 /**
  * An object representing the aggregate rating of the book
  *
- * @property {number} value The average user rating of the book
- * @property {number} count The total number of ratings the book has received represented by an integer
  * @example
  * ```ts
  * const rating: Rating = {
@@ -109,19 +115,20 @@ export type Price = {
  * }
  * ```
  */
-export type Rating = {
+export interface Rating {
+  /**
+   * The average user rating of the book
+   */
   value: number;
+  /**
+   * The total number of ratings the book has received represented by an integer
+   */
   count: number;
-};
+}
 
 /**
  * An object representing the language the book is read in, with its name and ISO 639 language codes
  *
- * @property {string} name The name of the language written with Latin characters
- * @property {string} iso639_1 The [ISO 639-1 code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) for the language
- * @property {string} iso639_2_T The [ISO 639-2-T code](https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes) for the language
- * @property {string} iso639_2_B The [ISO 639-2-B code](https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes) for the language
- * @property {string} iso639_3 The [ISO 639-3 code](https://en.wikipedia.org/wiki/List_of_ISO_639-3_codes) for the language
  * @example
  * ```ts
  * const language: BookLanguage = {
@@ -133,20 +140,32 @@ export type Rating = {
  * }
  * ```
  */
-export type BookLanguage = {
+export interface BookLanguage {
+  /**
+   * The name of the language written with Latin characters
+   */
   name: string;
+  /**
+   * The [ISO 639-1 code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) for the language
+   */
   iso639_1: string;
+  /**
+   * The [ISO 639-2-T code](https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes) for the language
+   */
   iso639_2_T: string;
+  /**
+   * The [ISO 639-2-B code](https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes) for the language
+   */
   iso639_2_B: string;
+  /**
+   * The [ISO 639-3 code](https://en.wikipedia.org/wiki/List_of_ISO_639-3_codes) for the language
+   */
   iso639_3: string;
-};
+}
 
 /**
  * An object representing a book's place in a series
  *
- * @property {string} name The name of the series
- * @property {string} url The Audible link to the full series listing
- * @property {number} [part] The book's place in the order of the series
  * @example
  * ```ts
  * const series: Series = {
@@ -156,21 +175,24 @@ export type BookLanguage = {
  * }
  * ```
  */
-export type Series = {
+export interface Series {
+  /**
+   * The name of the series
+   */
   name: string;
+  /**
+   * The Audible link to the full series listing
+   */
   url?: string;
+  /**
+   * The book's place in the order of the series
+   */
   part?: number;
-};
+}
 
 /**
  * A creator of the audiobook, either Author or Narrator
  *
- * @property {string} name The creator's name
- * @property {string} [url] The Audible URL of the creator's page with photo and bio
- * @property {string} [id] Amazon's unique identifier for the creator (Author only)
- * @property {string} [bio] A description of the creator with HTML tags stripped (Author only)
- * @property {string} [imageUrl] A full resolution photo of the creator (Author only)
- * @property {string} [thumbnailImageUrl] A small resolution thumbnail of the creator's photo (usually 120x120) (Author only)
  * @example
  * ```ts
  * const author: Creator = {
@@ -185,58 +207,117 @@ export type Series = {
  * }
  * ```
  */
-export type Creator = {
+export interface Creator {
+  /**
+   * The creator's name
+   */
   name: string;
+  /**
+   * The Audible URL of the creator's page with photo and bio
+   */
   url?: string;
+  /**
+   * Amazon's unique identifier for the creator (Author only)
+   */
   id?: string;
+  /**
+   * A description of the creator with HTML tags stripped (Author only)
+   */
   bio?: string;
+  /**
+   * A full resolution photo of the creator (Author only)
+   */
   imageUrl?: string;
+  /**
+   * A small resolution thumbnail of the creator's photo (usually 120x120) (Author only)
+   */
   thumbnailImageUrl?: string;
-};
+}
 
 /**
  * An object representing the complete details of an audible audiobook
- *
- * @property {string} [asin] "Amazon Standard Identification Number" for the book
- * @property {string} [sku] Amazon's "Stock Keeping Unit" for the book
- * @property {string} [url] The Audible link where you can view the book
- * @property {string} [title] Audible's full title for the book
- * @property {string} [cleanTitle] A simplified version of the title with extra information removed
- * @property {Date} [datePublished] The date the book was published
- * @property {string} [description] Audible's description for the book with the HTML tags removed
- * @property {Creator[]} authors A list of author's given credit for writing the book
- * @property {Creator[]} narrators A list of narrators's given credit for reading the book
- * @property {string} [publisher] The publishing company for the audiobook
- * @property {string} [copyright] The copyright statement for the book
- * @property {string} [copyrightYear] The year the original book was copyrighted
- * @property {Series[]} [series] The series' that the book is a part of on Audible
- * @property {boolean} [isAbridged] Whether or not the book is an abridged version
- * @property {string} [coverUrl] A link to a full sized image of the book's cover
- * @property {Genre[]} [genres] An array of genres the book is a part of
- * @property {Price} [price] The price range the book has been sold for
- * @property {Rating} [rating] The aggregate user rating of the book
- * @property {BookLanguage} [language] An object representing the language the book is read in
- * @property {number} [duration] An object representing the language the book is read in
  */
 export type Book = {
+  /**
+   * "Amazon Standard Identification Number" for the book
+   */
   asin?: string;
+  /**
+   * Amazon's "Stock Keeping Unit" for the book
+   */
   sku?: string;
+  /**
+   * The Audible link where you can view the book
+   */
   url?: string;
+  /**
+   * Audible's full title for the book
+   */
   title?: string;
+  /**
+   * A simplified version of the title with extra information removed
+   *
+   * Removed information includes the terms abridged/unabridged, and the book number
+   */
   cleanTitle?: string;
+  /**
+   * The date the book was published
+   */
   datePublished?: Date;
+  /**
+   * Audible's description for the book with the HTML tags removed
+   */
   description?: string;
+  /**
+   * A list of author's given credit for writing the book
+   */
   authors: Creator[];
+  /**
+   * A list of narrators's given credit for reading the book
+   */
   narrators: Creator[];
+  /**
+   * The publishing company for the audiobook
+   */
   publisher?: string;
+  /**
+   * The copyright statement for the book
+   */
   copyright?: string;
+  /**
+   * The year the original book was copyrighted
+   */
   copyrightYear?: string;
+  /**
+   * The series' that the book is a part of on Audible
+   */
   series?: Series[];
+  /**
+   * Whether or not the book is an abridged version
+   */
   isAbridged?: boolean;
+  /**
+   * A link to a full sized image of the book's cover
+   */
   coverUrl?: string;
+  /**
+   * An array of genres the book is a part of
+   */
   genres?: Genre[];
+  /**
+   * The price range the book has been sold for
+   */
   price?: Price;
+  /**
+   * The aggregate user rating of the book
+   */
   rating?: Rating;
+  /**
+   * An object representing the language the book is read in
+   */
   language?: BookLanguage;
+  /**
+   * The total length of the book in seconds
+   */
   duration?: number;
 };
