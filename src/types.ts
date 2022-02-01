@@ -50,8 +50,7 @@ export type Category =
   | "scienceFictionAndFantasy"
   | "sportsAndOutdoors"
   | "teenAndYoungAdult"
-  | "travelAndTourism"
-  | undefined;
+  | "travelAndTourism";
 
 export type Duration = "<1" | "1-3" | "3-6" | "6-10" | "10-20" | ">20";
 
