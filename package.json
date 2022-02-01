@@ -1,6 +1,6 @@
 {
   "name": "audible-api",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0-beta.2",
   "description": "A Node.js API for searching the audible website",
   "license": "MIT",
   "author": "Chris Sandvik <chris.sandvik@gmail.com>",
